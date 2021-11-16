@@ -24,7 +24,7 @@ const ChartGrid = ({ data }: IChartGridData) => {
 
 	const getYValues = () => {
 		const size = Math.floor(getMaxValue() / ROW_NUM);
-		return [...Array.from({ length: ROW_NUM }, (v, k) => (k as number) + size).reverse(), ...[0]];
+		return [...Array.from({ length: ROW_NUM }, (v, k) => (k as number) + size).reverse(), 0];
 	};
 
 	return (
@@ -46,13 +46,15 @@ const ChartGrid = ({ data }: IChartGridData) => {
 				})}
 			</div>
 			<div className="chart_x">
-				{getGridX().map(x => {
-					return (
-						<div className="chart_x_item" key={x}>
-							{x}
-						</div>
-					);
-				})}
+				{() =>
+					getGridX().map(x => {
+						return (
+							<div className="chart_x_item" key={x}>
+								{x}
+							</div>
+						);
+					})
+				}
 			</div>
 		</>
 	);
