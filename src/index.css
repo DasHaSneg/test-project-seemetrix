@@ -132,6 +132,7 @@ code {
   width: 100%;
   bottom: 76px;
   left: calc(100% /8 / 2);
+  align-items: baseline;
 }
 
 .chart_block {
