@@ -23,8 +23,12 @@ const ChartGrid = ({ data }: IChartGridData) => {
 	};
 
 	const getYValues = () => {
-		const size = Math.floor(getMaxValue() / ROW_NUM);
-		return [...Array.from({ length: ROW_NUM }, (v, k) => (k as number) + size).reverse(), 0];
+		const mx = getMaxValue();
+		if (mx !== -1) {
+			const size = Math.floor(mx / ROW_NUM);
+			return [...Array.from({ length: ROW_NUM }, (v, k) => (k as number) + size).reverse(), 0];
+		}
+		return Array(ROW_NUM + 1).fill(0);
 	};
 
 	return (
@@ -32,11 +36,7 @@ const ChartGrid = ({ data }: IChartGridData) => {
 			<Blocks data={data} />
 			<div className="chart_y">
 				{getYValues().map(value => {
-					return (
-						<div className="chart_y_item" key={value}>
-							{value}
-						</div>
-					);
+					return <div className="chart_y_item">{value}</div>;
 				})}
 			</div>
 			<div className="chart_white_block" />
