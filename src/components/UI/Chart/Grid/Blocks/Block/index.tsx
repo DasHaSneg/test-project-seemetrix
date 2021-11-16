@@ -1,28 +1,32 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IAgeInfo } from '../../../index';
-
-const MAX_HEIGHT = 143;
+import Unit from './Unit';
 
 interface IBlock {
 	blockValues: IAgeInfo[];
+	pxSize: number;
 }
 
-const Block = ({ blockValues }: IBlock) => {
+const Block = ({ blockValues, pxSize }: IBlock) => {
 	const [height, setHeight] = useState('');
 
-	const setMaxValue = () => {
-		console.log(height);
-		console.log(`${Math.floor(MAX_HEIGHT / blockValues.reduce((acc, curr) => (acc.value > curr.value ? acc : curr)).value)}px`);
-		setHeight(`${Math.floor(MAX_HEIGHT / blockValues.reduce((acc, curr) => (acc.value > curr.value ? acc : curr)).value)}px`);
+	const getMaxValue = () => {
+		return blockValues.reduce((acc, curr) => (acc.value > curr.value ? acc : curr)).value * pxSize;
 	};
 
 	useEffect(() => {
-		// eslint-disable-next-line no-unused-expressions
-		setMaxValue();
+		setHeight(`${getMaxValue()}px`);
 	}, [blockValues]);
 
-	return <div className="chart_block" style={{ height }} />;
+	return (
+		<div className="chart_block" style={{ height }}>
+			{blockValues &&
+				blockValues.reverse().map(unitValue => {
+					return <Unit key={unitValue.group} unitValue={unitValue} pxSize={pxSize} />;
+				})}
+		</div>
+	);
 };
 
 export default Block;

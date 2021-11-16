@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 import ChartLegend from './Legend';
 import ChartGrid from './Grid';
 
-interface IChartData {
+export interface IChartData {
 	name: string;
 	data: IBlockData[];
 }
@@ -16,12 +15,17 @@ export interface IBlockData {
 export interface IAgeInfo {
 	group: string;
 	value: number;
+	color: string;
 }
 
 // eslint-disable-next-line react/prop-types
 const Chart = ({ name, data }: IChartData) => {
-	const getLegendData = (): string[] => {
-		if (data[0] && data[0].blockValues) return data[0].blockValues.map(item => item.group) as string[];
+	const getLegendData = (): { color: string; name: string }[] => {
+		if (data[0] && data[0].blockValues)
+			return data[0].blockValues.map(item => ({
+				name: item.group,
+				color: item.color,
+			}));
 		return [];
 	};
 
@@ -32,7 +36,7 @@ const Chart = ({ name, data }: IChartData) => {
 				<div className="chart_grid_wrapper">
 					<ChartGrid data={data} />
 				</div>
-				<ChartLegend names={getLegendData()} />
+				<ChartLegend legValue={getLegendData()} />
 			</div>
 		</div>
 	);

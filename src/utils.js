@@ -8,6 +8,42 @@ export const getPosition = date => {
 	return new Date(date).getDay();
 };
 
+const getAgePosition = group => {
+	switch (group) {
+		case 'undefined':
+			return 0;
+		case 'kid':
+			return 1;
+		case 'young':
+			return 2;
+		case 'adult':
+			return 3;
+		case 'old':
+			return 4;
+		default:
+			console.log('unknown group');
+			return 0;
+	}
+};
+
+const getColor = group => {
+	switch (group) {
+		case 'undefined':
+			return '#999999';
+		case 'kid':
+			return '#109618';
+		case 'young':
+			return '#3399ff';
+		case 'adult':
+			return '#3366cc';
+		case 'old':
+			return '#dc3912';
+		default:
+			console.log('unknown group');
+			return 0;
+	}
+};
+
 const groupByProp = (data, prop) => {
 	return data.reduce((groups, item) => {
 		const val = item[prop];
@@ -32,6 +68,8 @@ export const parseDataForChart = data => {
 					const newAgeInfo = {};
 					newAgeInfo.group = ageInfo.n;
 					newAgeInfo.value = ageInfo.v;
+					newAgeInfo.position = getAgePosition(ageInfo.n);
+					newAgeInfo.color = getColor(ageInfo.n);
 					ageArray.push(newAgeInfo);
 				});
 				newItem.blockValues = ageArray;
@@ -47,7 +85,7 @@ export const parseDataForChart = data => {
 		});
 		dataArray.push(newItem);
 	});
-	const resultData = [];
+	let resultData = [];
 	Object.values(groupByProp(dataArray, 'x')).forEach(function (arrayItem) {
 		let newItem = {};
 		arrayItem.forEach(function (item) {
@@ -65,7 +103,11 @@ export const parseDataForChart = data => {
 		});
 		resultData.push(newItem);
 	});
-	return resultData.sort((a, b) => (a.position > b.position ? 1 : -1));
+	resultData.sort((a, b) => (a.position > b.position ? 1 : -1));
+	resultData.forEach(item => {
+		// eslint-disable-next-line no-param-reassign
+		delete item.position;
+		item.blockValues.sort((a, b) => (a.position > b.position ? 1 : -1));
+	});
+	return resultData;
 };
-
-// [x: 'Mon' , blocValues: [{group: yang, value: 50, color: ''}]

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { IAgeInfo, IBlockData } from '../index';
-import { ROW_NUM } from '../../../../constants';
+import { IBlockData } from '../index';
+import { MAX_HEIGHT, ROW_NUM } from '../../../../constants';
 import Blocks from './Blocks';
 
 export interface IChartGridData {
@@ -8,32 +8,44 @@ export interface IChartGridData {
 }
 
 const ChartGrid = ({ data }: IChartGridData) => {
-	const getGridX = (): string[] => {
+	const getXValues = (): string[] => {
 		return data.map(item => item.x);
 	};
 
 	const getMaxValue = (): number => {
-		let maxObj: IAgeInfo;
+		let sum: number;
 		let totalMaxVal = -1;
 		data.forEach(dataItem => {
-			maxObj = dataItem.blockValues.reduce((acc, curr) => (acc.value > curr.value ? acc : curr));
-			if (maxObj.value > totalMaxVal) totalMaxVal = maxObj.value;
+			sum = 0;
+			dataItem.blockValues.forEach(val => {
+				sum += val.value;
+			});
+			if (sum > totalMaxVal) totalMaxVal = sum;
 		});
 		return totalMaxVal;
+	};
+
+	const getPxSize = () => {
+		const mx = getMaxValue();
+		return mx !== 0 ? MAX_HEIGHT / mx : 0;
 	};
 
 	const getYValues = () => {
 		const mx = getMaxValue();
 		if (mx !== -1) {
-			const size = Math.floor(mx / ROW_NUM);
-			return [...Array.from({ length: ROW_NUM }, (v, k) => (k as number) + size).reverse(), 0];
+			const values = [];
+			const size = mx / ROW_NUM;
+			for (let i = mx; i >= 0; i -= size) {
+				values.push(i);
+			}
+			return values;
 		}
 		return Array(ROW_NUM + 1).fill(0);
 	};
 
 	return (
 		<>
-			<Blocks data={data} />
+			<Blocks data={data} pxSize={getPxSize()} />
 			<div className="chart_y">
 				{getYValues().map(value => {
 					return <div className="chart_y_item">{value}</div>;
@@ -41,12 +53,13 @@ const ChartGrid = ({ data }: IChartGridData) => {
 			</div>
 			<div className="chart_white_block" />
 			<div className="chart_grid">
-				{Array.from({ length: 40 }).map(() => {
-					return <div />;
+				{Array.from({ length: 40 }).map((number, index) => {
+					// eslint-disable-next-line react/no-array-index-key
+					return <div key={index} />;
 				})}
 			</div>
 			<div className="chart_x">
-				{getGridX().map(x => {
+				{getXValues().map(x => {
 					return (
 						<div className="chart_x_item" key={x}>
 							{x}

@@ -11,7 +11,11 @@ const DataSelector = ({ options, selectedIds, handleSelect }: IDataSelector) => 
 		<div className="selector_wrapper">
 			<select id="lang" value={selectedIds} multiple onChange={e => handleSelect(e)}>
 				{options.map(option => {
-					return <option value={option}>{option}</option>;
+					return (
+						<option key={option} value={option}>
+							{option}
+						</option>
+					);
 				})}
 			</select>
 		</div>

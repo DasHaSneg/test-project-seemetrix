@@ -132,15 +132,21 @@ code {
   width: 100%;
   bottom: 76px;
   left: calc(100% /8 / 2);
-  align-items: baseline;
+  align-items: end;
 }
 
 .chart_block {
   width: calc(100% / 8 - 24px);
   height: 50px;
-  background: #109618;
+  background: #d9d9d9;
   margin: 0 12px;
   transition: height 3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.bloc_unit {
+
 }
 
 .chart_legend_wrapper {
@@ -217,3 +223,6 @@ select {
   outline: none;
 }
 
+option[selected] {
+  background-color: #545454;
+}

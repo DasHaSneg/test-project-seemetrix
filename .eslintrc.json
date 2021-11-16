@@ -24,7 +24,6 @@
         "prettier"
     ],
     "rules": {
-        "prefer-const": "off",
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
