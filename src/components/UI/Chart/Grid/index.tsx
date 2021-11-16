@@ -46,15 +46,13 @@ const ChartGrid = ({ data }: IChartGridData) => {
 				})}
 			</div>
 			<div className="chart_x">
-				{() =>
-					getGridX().map(x => {
-						return (
-							<div className="chart_x_item" key={x}>
-								{x}
-							</div>
-						);
-					})
-				}
+				{getGridX().map(x => {
+					return (
+						<div className="chart_x_item" key={x}>
+							{x}
+						</div>
+					);
+				})}
 			</div>
 		</>
 	);
