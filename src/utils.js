@@ -129,9 +129,9 @@ const sortData = arr => {
 };
 
 export const parseDataForChart = data => {
-	const dataArray = createSuitableArray(data);
-	let resultData = groupResData(dataArray);
-	resultData = sortData(resultData);
-	console.log(resultData);
-	return resultData;
+	let dataArray = createSuitableArray(data);
+	dataArray = groupResData(dataArray);
+	dataArray = sortData(dataArray);
+	console.log(dataArray);
+	return dataArray;
 };
