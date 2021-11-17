@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { IAgeInfo } from '../../../index';
-import Unit from './Unit';
+import Unit from '../Unit';
 
 interface IBlock {
 	blockValues: IAgeInfo[];
@@ -12,11 +12,17 @@ const Block = ({ blockValues, pxSize }: IBlock) => {
 	const [height, setHeight] = useState('');
 
 	const getMaxValue = () => {
-		return blockValues.reduce((acc, curr) => (acc.value > curr.value ? acc : curr)).value * pxSize;
+		let sum = 0;
+		blockValues.forEach(val => {
+			sum += val.value;
+		});
+		return sum * pxSize;
 	};
 
 	useEffect(() => {
-		setHeight(`${getMaxValue()}px`);
+		const mx = getMaxValue();
+		console.log(mx);
+		setHeight(`${mx}px`);
 	}, [blockValues]);
 
 	return (

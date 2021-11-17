@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import DataSelector from '../../UI/DataSelector';
-import Chart, { IChartData } from '../../UI/Chart';
+import Selector from '../../UI/Selector';
+import Chart from '../../UI/Chart';
 import { getInfo, setIds, setId } from '../../../redux/actions/data';
 import { selectChartInfoByDeviceIds, selectDevicesId } from '../../../redux/selectors';
 import { rootState } from '../../../redux/rootReducer';
@@ -17,8 +17,8 @@ const ChartPage = () => {
 		dispatch(getInfo());
 	}, []);
 
-	const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const { value } = e.target;
+	const handleSelect = (index: number) => {
+		const value = ids[index];
 		if (selectedIds.indexOf(value) === -1) dispatch(setId(value));
 		else {
 			dispatch(setIds(selectedIds.filter((id: string) => id !== value)));
@@ -27,7 +27,7 @@ const ChartPage = () => {
 
 	return (
 		<div className="wrapper">
-			<DataSelector options={ids} handleSelect={handleSelect} selectedIds={selectedIds} />
+			<Selector options={ids} handleSelect={handleSelect} selectedIds={selectedIds} />
 			<Chart name="Total Views: Age (by day of week)" data={chartData} />
 		</div>
 	);

@@ -54,38 +54,33 @@ const groupByProp = (data, prop) => {
 	}, {});
 };
 
-export const parseDataForChart = data => {
-	let dataArray = [];
-	const rawData = groupByProp(data, 'n');
-	Object.values(rawData).forEach(function (arrayItem) {
-		const newItem = {};
-		arrayItem.forEach(function (item) {
-			if (Object.keys(newItem).length === 0) {
-				newItem.x = getDay(item.n);
-				newItem.position = getPosition(item.n);
-				const ageArray = [];
-				item.o.forEach(function (ageInfo) {
-					const newAgeInfo = {};
-					newAgeInfo.group = ageInfo.n;
-					newAgeInfo.value = ageInfo.v;
-					newAgeInfo.position = getAgePosition(ageInfo.n);
-					newAgeInfo.color = getColor(ageInfo.n);
-					ageArray.push(newAgeInfo);
-				});
-				newItem.blockValues = ageArray;
-			} else {
-				item.o.forEach(function (ageInfo) {
-					let index = -1;
-					newItem.blockValues.forEach(function (groupObj, i) {
-						if (groupObj.group === ageInfo.n) index = i;
-					});
-					newItem.blockValues[index].value += ageInfo.v;
-				});
-			}
-		});
-		dataArray.push(newItem);
+const getIndex = (obj1, obj2, prop1, prop2) => {
+	let index = -1;
+	obj1.blockValues.forEach(function (groupObj, i) {
+		if (groupObj[prop1] === obj2[prop2]) index = i;
 	});
-	let resultData = [];
+	return index;
+};
+
+const createNewItem = obj => {
+	const newItemObj = {};
+	newItemObj.x = getDay(obj.n);
+	newItemObj.position = getPosition(obj.n);
+	const ageArray = [];
+	obj.o.forEach(function (ageInfo) {
+		const newAgeInfo = {};
+		newAgeInfo.group = ageInfo.n;
+		newAgeInfo.value = ageInfo.v;
+		newAgeInfo.position = getAgePosition(ageInfo.n);
+		newAgeInfo.color = getColor(ageInfo.n);
+		ageArray.push(newAgeInfo);
+	});
+	newItemObj.blockValues = ageArray;
+	return newItemObj;
+};
+
+const groupResData = dataArray => {
+	const resultData = [];
 	Object.values(groupByProp(dataArray, 'x')).forEach(function (arrayItem) {
 		let newItem = {};
 		arrayItem.forEach(function (item) {
@@ -93,21 +88,50 @@ export const parseDataForChart = data => {
 				newItem = item;
 			} else {
 				item.blockValues.forEach(function (ageInfo) {
-					let index = -1;
-					newItem.blockValues.forEach(function (groupObj, i) {
-						if (groupObj.group === ageInfo.group) index = i;
-					});
-					newItem.blockValues[index].value += ageInfo.value;
+					newItem.blockValues[getIndex(newItem, ageInfo, 'group', 'group')].value += ageInfo.value;
 				});
 			}
 		});
 		resultData.push(newItem);
 	});
-	resultData.sort((a, b) => (a.position > b.position ? 1 : -1));
-	resultData.forEach(item => {
+	return resultData;
+};
+
+const createSuitableArray = data => {
+	const dataArray = [];
+	const rawData = groupByProp(data, 'n');
+	Object.values(rawData).forEach(function (arrayItem) {
+		let newItem = {};
+		arrayItem.forEach(function (item) {
+			if (Object.keys(newItem).length === 0) {
+				newItem = createNewItem(item);
+			} else {
+				item.o.forEach(function (ageInfo) {
+					newItem.blockValues[getIndex(newItem, ageInfo, 'group', 'n')].value += ageInfo.v;
+				});
+			}
+		});
+		dataArray.push(newItem);
+	});
+	return dataArray;
+};
+
+const comparator = (a, b) => (a.position > b.position ? 1 : -1);
+
+const sortData = arr => {
+	arr.sort(comparator);
+	arr.forEach(item => {
 		// eslint-disable-next-line no-param-reassign
 		delete item.position;
-		item.blockValues.sort((a, b) => (a.position > b.position ? 1 : -1));
+		item.blockValues.sort(comparator);
 	});
+	return arr;
+};
+
+export const parseDataForChart = data => {
+	const dataArray = createSuitableArray(data);
+	let resultData = groupResData(dataArray);
+	resultData = sortData(resultData);
+	console.log(resultData);
 	return resultData;
 };
